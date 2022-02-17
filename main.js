@@ -2,7 +2,7 @@ import './style.css';
 
 import * as THREE from 'three';
 
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 //Exported from Blender
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -24,12 +24,15 @@ camera.position.setX(5);
 
 renderer.render(scene, camera);
 
+//Debug camera
+//const controls = new OrbitControls(camera, renderer.domElement);
+
 const pointLight = new THREE.PointLight(0xffffff); //Points Light
 pointLight.position.set(10, 10, 15);
 pointLight.rotation.set(10);
 
-const ambientLight = new THREE.AmbientLight(0xffffff); //Ambient Lighting
-scene.add(/*pointLight,*/ ambientLight)
+const ambientLightA = new THREE.AmbientLight(0xffffff); //Ambient Lighting
+scene.add(/*pointLight,*/ ambientLightA)
 
 /*
 const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -37,7 +40,6 @@ const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(lightHelper, gridHelper);
 */
 
-//const controls = new OrbitControls(camera, renderer.domElement);
 
 const blend_loader = new GLTFLoader();
 
@@ -63,7 +65,7 @@ const moonTexture = new THREE.TextureLoader().load('assets/moon.jpg');     //BAS
 const normalTexture = new THREE.TextureLoader().load('assets/normal.jpg'); //NORMAL MAP
 
 const moon = new THREE.Mesh(
-  new THREE.SphereGeometry(3, 32, 32), //CREATE GEOMETRY
+  new THREE.SphereGeometry(1.62, 34.56, 34.56), //CREATE GEOMETRY
   new THREE.MeshStandardMaterial( {
     map: moonTexture,   //APPLY TEXTURES
     normalMap: normalTexture,
@@ -86,10 +88,13 @@ const earth = new THREE.Mesh(
   new THREE.SphereGeometry(6, 128, 128),
   new THREE.MeshStandardMaterial( {
     map: earthTexture,
-    bumpMap: earthBumpMap,
     envMap: earthSpecMap,
+  }),
+  new THREE.MeshNormalMaterial( {
     normalMap: earthNormalMap,
-    envMap: earthCloudMap,
+  }),
+  new THREE.MeshDepthMaterial( {
+    bumpMap: earthBumpMap,
   })
 );
 
@@ -102,26 +107,14 @@ earth_atmosphere.opacity = 0.1;
 */
 
 scene.add(earth, /*earth_atmosphere*/);
-
-
-function moveCamera() {
-
-  const t = document.body.getBoundingClientRect().top;
-
-  //camera.position.z = t * 0.01;
-  //camera.position.x = t * 0.0002;
-  camera.position.y = t * 0.009;
-}
-
-
-document.body.onscroll = moveCamera
-
+earth.rotation.y = 30;
+earth.rotation.x = 0.55;
 
 function animate() {
   requestAnimationFrame( animate );
 
   earth.rotation.x += 0.00;
-  earth.rotation.y += 0.0001;
+  earth.rotation.y += 0.00005;
   earth.rotation.z += 0.00;
 
   moon.position.x += 0.0001;
@@ -134,3 +127,63 @@ function animate() {
 }
 
 animate()
+
+//SCENE B //---------------------------------=------------------------------------------=------------------------------------------=-------------------------------------=--------------
+const sceneB = new THREE.Scene();
+
+
+const rendererB = new THREE.WebGLRenderer({
+  canvas: document.querySelector('#second_canvas'),
+});
+
+const cameraB = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+rendererB.setPixelRatio(window.devicePixelRatio);
+rendererB.setSize(window.innerWidth, window.innerHeight);
+cameraB.position.setZ(10);
+cameraB.position.setX(5);
+
+//const controls = new THREE.OrbitControls( cameraB, rendererB.domElement ); controls.target.set(0,0,0);
+const gridHelper = new THREE.GridHelper(200, 50);
+sceneB.add(gridHelper);
+
+const pointLightB = new THREE.PointLight(0xffffff); //Points Light
+pointLightB.position.set(-25, 4, 7);
+pointLightB.rotation.set(5);
+
+sceneB.add(pointLightB);
+
+//const ambientLightB = new THREE.AmbientLight(0xffffff); //Ambient Lighting
+//sceneB.add(ambientLightB) //ambientLight)
+
+sceneB.background = spaceTexture;
+
+const marsTexture = new THREE.TextureLoader().load('assets/8k_earth_nightmap.jpg');
+const marsNormal = new THREE.TextureLoader().load('assets/mars_1k_normal.jpg');
+
+const mars = new THREE.Mesh( 
+  new THREE.SphereGeometry(6, 128, 128),
+  new THREE.MeshStandardMaterial( {
+    map: marsTexture,
+    normalMap: marsNormal,
+  })
+);
+
+sceneB.add(mars);
+
+rendererB.render(sceneB, cameraB);
+
+
+
+function moveCamera() {
+
+  const t = document.body.getBoundingClientRect().top;
+
+  //camera.position.z = t * 0.01;
+  //camera.position.x = t * 0.0002;
+  camera.position.y = t * 0.009;
+}
+
+document.body.onscroll = moveCamera
+
+rendererB.render(sceneB, cameraB);

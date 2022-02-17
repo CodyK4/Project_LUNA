@@ -1,3 +1,18 @@
+/*Navbar*/
+body::-webkit-scrollbar {
+  width: 0.5vw;
+}
+
+body::-webkit-scrollbar-track {
+  background: black;
+}
+
+body::-webkit-scrollbar-thumb {
+  border: 1vw;
+  border-radius: 10vw;
+  background: purple;
+}
+
 html, body {
   margin: 0;
   -ms-scroll-snap-type: y mandatory;
@@ -22,12 +37,8 @@ html, body {
   background-color: transparent;
 }
 
-.page_section:nth-child(2) {
-  background-color: red;
-}
-
 .page_section:nth-child(3) {
-  background-color: green;
+  background-color: black;
 }
 
 .page_section:nth-child(4) {
@@ -35,6 +46,11 @@ html, body {
 }
 
 .page_section #first_canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.page_section #second_canvas {
   width: 100%;
   height: 100%;
 }
